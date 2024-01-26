@@ -1,6 +1,6 @@
 import pytest
 
-from my_package.example import add_one
+from optimal_ramp_fit.example import add_one
 
 
 def test_type():

@@ -1,7 +1,10 @@
 [project]
-name = "my_package"
-authors = [{name = "Example Author", email = "author@mpia.de"}]
-description = "An example package"
+name = "optimal_ramp_fit"
+authors = [
+    {name = "Timothy Brandt", email = "tbrandt@physics.ucsb.edu"},
+    {name = "James Davies", email = "jdavies@mpia.de"},
+]
+description = "Optimal Fitting, Debiasing, and Cosmic Ray Rejection for Detectors Read Out Up-the-Ramp"
 readme = "README.md"
 license = { file = 'LICENSE' }
 classifiers = [
@@ -12,6 +15,7 @@ classifiers = [
 requires-python = ">=3.9"
 dependencies = [
     "numpy",
+    "scipy",
 ]
 dynamic = ['version']
 
@@ -31,8 +35,8 @@ test = [
 ]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/mpi-astronomy/snowblind/issues"
-"Source Code" = "https://github.com/mpi-astronomy/snowblind"
+"Bug Tracker" = "https://github.com/jdavies-st/optimal-ramp-fit/issues"
+"Source Code" = "https://github.com/jdavies-st/optimal-ramp-fit"
 
 
 [build-system]
@@ -44,7 +48,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "src/my_package/_version.py"
+write_to = "src/optimal_ramp_fit/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
