@@ -4,7 +4,7 @@ import warnings
 
 class Covar:
     """
-    class Covar holding read and photon noise components of alpha and
+    Holds read and photon noise components of alpha and
     beta and the time intervals between the resultant midpoints
     """
 
@@ -14,16 +14,16 @@ class Covar:
         the covariance matrix of the resultant differences, and the time
         intervals between the resultant midpoints.
 
-        Arguments:
-        1. readtimes [list of values or lists for the times of reads.  If
-                      a list of lists, times for reads that are averaged
-                      together to produce a resultant.]
+        Parameters
+        ----------
+        readtimes : [list of values or lists
+            Times of reads.  If a list of lists, times for reads that are
+            averaged together to produce a resultant.
 
-        Optional arguments:
-        2. pedestal  [boolean: does the covariance matrix include the terms
-                      for the first resultant?  This is needed if fitting
-                      for the pedestal (i.e. the reset value).  Default
-                      False. ]
+        pedestal : boolean
+            does the covariance matrix include the terms for the first
+            resultant?  This is needed if fitting for the pedestal
+            (i.e. the reset value).  [Default False]
         """
 
         mean_t = []  # mean time of the resultant as defined in the paper
@@ -85,18 +85,26 @@ class Covar:
         Calculate the bias in the best-fit count rate from estimating the
         covariance matrix.  This calculation is derived in the paper.
 
-        Arguments:
-        1. countrates [array of count rates at which the bias is desired]
-        2. sig [float, single read noise]
-        3. cvec [weight vector on resultant differences for initial
-                 estimation of count rate for the covariance matrix.
-                 Will be renormalized inside this function.]
-        Optional argument:
-        4. da [float, fraction of the count rate plus sig**2 to use for finite
-               difference estimate of the derivative.  Default 1e-7.]
+        Parameters
+        ----------
+        countrates : array-like
+            count rates at which the bias is desired
 
-        Returns:
-        1. bias [array, bias of the best-fit count rate from using cvec
+        sig : float
+            single read noise
+
+        cvec : 1-D array
+            weight vector on resultant differences for initial
+            estimation of count rate for the covariance matrix.
+            Will be renormalized inside this function.
+
+        da : float
+            Fraction of the count rate plus sig**2 to use for finite
+            difference estimate of the derivative.  [Default 1e-7.]
+
+        Returns
+        -------
+        bias : [array, bias of the best-fit count rate from using cvec
                  plus the observed resultants to estimate the covariance
                  matrix]
         """
@@ -169,11 +177,12 @@ class Ramp_Result:
         fewer omitted resultant differences to get the correct values
         without double-coundint omissions.
 
-        Arguments:
-        1. diffs2use [a 2D array matching self.countrate_oneomit in
-                      shape with zero for resultant differences that
-                      were masked and one for differences that were
-                      not masked]
+        Parameters
+        ----------
+        diffs2use : array-like
+            2D Array matching self.countrate_oneomit in shape with zero
+            for resultant differences that were masked and one for
+            differences that were not masked
 
         This function replaces the relevant entries of
         self.countrate_twoomit, self.chisq_twoomit,
@@ -215,35 +224,45 @@ def fit_ramps(
     resetsig=np.inf,
 ):
     """
-    Function fit_ramps.  Fits ramps to read differences using the
+    Fits ramps to read differences using the
     covariance matrix for the read differences as given by the diagonal
     elements and the off-diagonal elements.
 
-    Arguments:
-    1. diffs [resultant differences, shape (ndiffs, npix)]
-    2. Cov [class Covar, holds the covariance matrix information]
-    3. sig [read noise, 1D array, shape (npix)]
+    Parameters
+    ----------
+    diffs : array-like
+        Resultant differences, shape (ndiffs, npix)
 
-    Optional Arguments:
-    4. countrateguess [array of shape (npix): count rates to be used
-                     to estimate the covariance matrix.  Default None,
-                     in which case the average difference will be used,
-                     replacing negative means with zeros.]
-    5. diffs2use [shape (ndiffs, npix), boolean mask of whether to use
-                     each resultant difference for each pixel.  Default
-                     None]
-    6. detect_jumps [run the jump detection machinery leaving out
-                     single and consecutive resultant differences.
-                     Default False]
-    7. resetval [float or array of shape (npix): priors on the reset
-                     values.  Default 0.  Irrelevant unless
-                     Cov.pedestal is True.]
-    8. resetsig [float or array of shape (npix): uncertainties on the
-                     reset values.  Default np.inf, i.e., reset values
-                     have flat priors.  Irrelevant unless Cov.pedestal
-                     is True.]
+    Cov : `~Covar`
+        Holds the covariance matrix information
 
-    Returns:
+    sig : array-like
+        Read noise, 1D array, shape (npix)
+
+    countrateguess : array-like
+        array of shape (npix) count rates to be used to estimate the
+        covariance matrix.  Default None, in which case the average
+        difference will be used, replacing negative means with zeros.
+
+    diffs2use : boolean
+        shape (ndiffs, npix), boolean mask of whether to use each
+        resultant difference for each pixel.  [Default None]
+
+    detect_jumps : boolean
+        Run the jump detection machinery leaving out single and
+        consecutive resultant differences. [Default False]
+
+    resetval : float or array-like
+        Float or array of shape (npix) priors on the reset values.
+        Default 0.  Irrelevant unless Cov.pedestal is True.
+
+    resetsig : float or array-like
+        float or array of shape (npix) uncertainties on the reset
+        values.  Default np.inf, i.e., reset values have flat priors.
+        Irrelevant unless Cov.pedestal is True.]
+
+    Returns
+    -------
     Class Ramp_Result holding lots of information
     """
 
@@ -478,24 +497,30 @@ def mask_jumps(
     Function mask_jumps implements a likelihood-based, iterative jump
     detection algorithm.
 
-    Arguments:
-    1. diffs [resultant differences]
-    2. Cov [class Covar, holds the covariance matrix information.  Must
+    Parameters
+    ----------
+    diffs : [resultant differences]
+
+    Cov : [class Covar, holds the covariance matrix information.  Must
             be based on differences alone (i.e. without the pedestal)]
-    3. sig [read noise, 1D array]
-    Optional arguments:
-    4. threshold_oneomit [float, minimum chisq improvement to exclude
+
+    sig : [read noise, 1D array]
+
+    threshold_oneomit : [float, minimum chisq improvement to exclude
                           a single resultant difference.  Default 20.25,
                           i.e., 4.5 sigma]
-    5. threshold_twoomit [float, minimum chisq improvement to exclude
+
+    threshold_twoomit : [float, minimum chisq improvement to exclude
                           two sequential resultant differences.
                           Default 23.8, i.e., 4.5 sigma]
 
-    Returns:
-    1. diffs2use [a 2D array of the same shape as d, one for resultant
+    Returns
+    -------
+    diffs2use : [a 2D array of the same shape as d, one for resultant
                   differences that appear ok and zero for resultant
                   differences flagged as contaminated.]
-    2. countrates [a 1D array of the count rates after masking the pixels
+
+    countrates : [a 1D array of the count rates after masking the pixels
                   and resultants in diffs2use.]
     """
 
